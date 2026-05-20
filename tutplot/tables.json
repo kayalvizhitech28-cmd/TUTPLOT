@@ -1,0 +1,370 @@
+{
+  "tables": [
+    {
+      "TABLE_NAME": "login"
+    },
+    {
+      "TABLE_NAME": "student_application_table1"
+    },
+    {
+      "TABLE_NAME": "student_application_table2"
+    },
+    {
+      "TABLE_NAME": "student_application_table3"
+    },
+    {
+      "TABLE_NAME": "student_application_table4"
+    },
+    {
+      "TABLE_NAME": "staff_application_table1"
+    },
+    {
+      "TABLE_NAME": "staff_application_table2"
+    },
+    {
+      "TABLE_NAME": "fees_details_table"
+    },
+    {
+      "TABLE_NAME": "timetable_table"
+    },
+    {
+      "TABLE_NAME": "exam_table"
+    },
+    {
+      "TABLE_NAME": "mark_table"
+    },
+    {
+      "TABLE_NAME": "attendance_table"
+    }
+  ],
+  "columns": {
+    "login": [
+      {
+        "COLUMN_NAME": "management_id",
+        "DATA_TYPE": "int"
+      },
+      {
+        "COLUMN_NAME": "email_id",
+        "DATA_TYPE": "varchar"
+      },
+      {
+        "COLUMN_NAME": "password",
+        "DATA_TYPE": "varchar"
+      },
+      {
+        "COLUMN_NAME": "mobile_number",
+        "DATA_TYPE": "varchar"
+      },
+      {
+        "COLUMN_NAME": "management_code",
+        "DATA_TYPE": "varchar"
+      }
+    ],
+    "student_application_table1": [
+      {
+        "COLUMN_NAME": "student_id",
+        "DATA_TYPE": "int"
+      },
+      {
+        "COLUMN_NAME": "date_of_birth",
+        "DATA_TYPE": "date"
+      },
+      {
+        "COLUMN_NAME": "gender",
+        "DATA_TYPE": "varchar"
+      },
+      {
+        "COLUMN_NAME": "address",
+        "DATA_TYPE": "varchar"
+      },
+      {
+        "COLUMN_NAME": "district",
+        "DATA_TYPE": "varchar"
+      },
+      {
+        "COLUMN_NAME": "pincode",
+        "DATA_TYPE": "int"
+      },
+      {
+        "COLUMN_NAME": "student_code",
+        "DATA_TYPE": "varchar"
+      }
+    ],
+    "student_application_table2": [
+      {
+        "COLUMN_NAME": "educational_details_id",
+        "DATA_TYPE": "int"
+      },
+      {
+        "COLUMN_NAME": "admission_for_class",
+        "DATA_TYPE": "int"
+      },
+      {
+        "COLUMN_NAME": "name_of_the_board",
+        "DATA_TYPE": "varchar"
+      },
+      {
+        "COLUMN_NAME": "medium_of_study",
+        "DATA_TYPE": "varchar"
+      },
+      {
+        "COLUMN_NAME": "academic_year",
+        "DATA_TYPE": "int"
+      },
+      {
+        "COLUMN_NAME": "groups_and_subjects",
+        "DATA_TYPE": "varchar"
+      },
+      {
+        "COLUMN_NAME": "branch",
+        "DATA_TYPE": "varchar"
+      },
+      {
+        "COLUMN_NAME": "educational_code",
+        "DATA_TYPE": "varchar"
+      }
+    ],
+    "student_application_table3": [
+      {
+        "COLUMN_NAME": "fees_id",
+        "DATA_TYPE": "varchar"
+      },
+      {
+        "COLUMN_NAME": "admission_fees",
+        "DATA_TYPE": "int"
+      },
+      {
+        "COLUMN_NAME": "subject_fees",
+        "DATA_TYPE": "int"
+      },
+      {
+        "COLUMN_NAME": "total_fees",
+        "DATA_TYPE": "int"
+      },
+      {
+        "COLUMN_NAME": "fees_code",
+        "DATA_TYPE": "varchar"
+      }
+    ],
+    "student_application_table4": [
+      {
+        "COLUMN_NAME": "parentdetails_id",
+        "DATA_TYPE": "varchar"
+      },
+      {
+        "COLUMN_NAME": "father_name",
+        "DATA_TYPE": "varchar"
+      },
+      {
+        "COLUMN_NAME": "mother_name",
+        "DATA_TYPE": "varchar"
+      },
+      {
+        "COLUMN_NAME": "occupation",
+        "DATA_TYPE": "varchar"
+      },
+      {
+        "COLUMN_NAME": "fathers_mobile_no",
+        "DATA_TYPE": "varchar"
+      },
+      {
+        "COLUMN_NAME": "mothers_mobile_no",
+        "DATA_TYPE": "varchar"
+      },
+      {
+        "COLUMN_NAME": "fathers_email",
+        "DATA_TYPE": "varchar"
+      },
+      {
+        "COLUMN_NAME": "mothers_email",
+        "DATA_TYPE": "varchar"
+      },
+      {
+        "COLUMN_NAME": "pd_code",
+        "DATA_TYPE": "varchar"
+      }
+    ],
+    "staff_application_table1": [
+      {
+        "COLUMN_NAME": "staff_id",
+        "DATA_TYPE": "int"
+      },
+      {
+        "COLUMN_NAME": "date_of_birth",
+        "DATA_TYPE": "date"
+      },
+      {
+        "COLUMN_NAME": "gender",
+        "DATA_TYPE": "varchar"
+      },
+      {
+        "COLUMN_NAME": "address",
+        "DATA_TYPE": "varchar"
+      },
+      {
+        "COLUMN_NAME": "district",
+        "DATA_TYPE": "varchar"
+      },
+      {
+        "COLUMN_NAME": "pincode",
+        "DATA_TYPE": "int"
+      },
+      {
+        "COLUMN_NAME": "staff_code",
+        "DATA_TYPE": "varchar"
+      }
+    ],
+    "staff_application_table2": [
+      {
+        "COLUMN_NAME": "gd_id",
+        "DATA_TYPE": "int"
+      },
+      {
+        "COLUMN_NAME": "email_id",
+        "DATA_TYPE": "int"
+      },
+      {
+        "COLUMN_NAME": "mobile_no",
+        "DATA_TYPE": "varchar"
+      },
+      {
+        "COLUMN_NAME": "qualification",
+        "DATA_TYPE": "varchar"
+      },
+      {
+        "COLUMN_NAME": "specialization",
+        "DATA_TYPE": "varchar"
+      },
+      {
+        "COLUMN_NAME": "joining_date",
+        "DATA_TYPE": "date"
+      },
+      {
+        "COLUMN_NAME": "gd_code",
+        "DATA_TYPE": "varchar"
+      }
+    ],
+    "fees_details_table": [
+      {
+        "COLUMN_NAME": "payment_id",
+        "DATA_TYPE": "int"
+      },
+      {
+        "COLUMN_NAME": "student_id",
+        "DATA_TYPE": "int"
+      },
+      {
+        "COLUMN_NAME": "total_fees",
+        "DATA_TYPE": "int"
+      },
+      {
+        "COLUMN_NAME": "fees_paid",
+        "DATA_TYPE": "int"
+      },
+      {
+        "COLUMN_NAME": "date_of_pay",
+        "DATA_TYPE": "date"
+      },
+      {
+        "COLUMN_NAME": "pending_fees",
+        "DATA_TYPE": "int"
+      },
+      {
+        "COLUMN_NAME": "payment_code",
+        "DATA_TYPE": "varchar"
+      }
+    ],
+    "timetable_table": [
+      {
+        "COLUMN_NAME": "subject_id",
+        "DATA_TYPE": "int"
+      },
+      {
+        "COLUMN_NAME": "subject_name",
+        "DATA_TYPE": "varchar"
+      },
+      {
+        "COLUMN_NAME": "day",
+        "DATA_TYPE": "varchar"
+      },
+      {
+        "COLUMN_NAME": "handling_staff",
+        "DATA_TYPE": "varchar"
+      },
+      {
+        "COLUMN_NAME": "subject_code",
+        "DATA_TYPE": "varchar"
+      }
+    ],
+    "exam_table": [
+      {
+        "COLUMN_NAME": "exam_id",
+        "DATA_TYPE": "int"
+      },
+      {
+        "COLUMN_NAME": "exam",
+        "DATA_TYPE": "varchar"
+      },
+      {
+        "COLUMN_NAME": "date_of_exam",
+        "DATA_TYPE": "date"
+      },
+      {
+        "COLUMN_NAME": "exam_code",
+        "DATA_TYPE": "varchar"
+      }
+    ],
+    "mark_table": [
+      {
+        "COLUMN_NAME": "mark_id",
+        "DATA_TYPE": "int"
+      },
+      {
+        "COLUMN_NAME": "exam_id",
+        "DATA_TYPE": "int"
+      },
+      {
+        "COLUMN_NAME": "student_id",
+        "DATA_TYPE": "int"
+      },
+      {
+        "COLUMN_NAME": "marks",
+        "DATA_TYPE": "int"
+      },
+      {
+        "COLUMN_NAME": "total",
+        "DATA_TYPE": "int"
+      },
+      {
+        "COLUMN_NAME": "mark_code",
+        "DATA_TYPE": "varchar"
+      }
+    ],
+    "attendance_table": [
+      {
+        "COLUMN_NAME": "attendence_id",
+        "DATA_TYPE": "int"
+      },
+      {
+        "COLUMN_NAME": "student_id",
+        "DATA_TYPE": "int"
+      },
+      {
+        "COLUMN_NAME": "staff_id",
+        "DATA_TYPE": "int"
+      },
+      {
+        "COLUMN_NAME": "status",
+        "DATA_TYPE": "varchar"
+      },
+      {
+        "COLUMN_NAME": "date_of_exam",
+        "DATA_TYPE": "date"
+      },
+      {
+        "COLUMN_NAME": "attendence_code",
+        "DATA_TYPE": "varchar"
+      }
+    ]
+  }
+}

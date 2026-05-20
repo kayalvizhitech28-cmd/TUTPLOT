@@ -1,0 +1,28 @@
+const { poolPromise } = require("./config/db");
+
+async function fixSchema() {
+  try {
+    const pool = await poolPromise;
+    console.log("Creating timetable table if it doesn't exist...");
+    
+    await pool.request().query(`
+      IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='timetable' and xtype='U')
+      CREATE TABLE timetable (
+        id INT IDENTITY(1,1) PRIMARY KEY,
+        class_name VARCHAR(50),
+        day VARCHAR(20),
+        subject_code VARCHAR(20),
+        subject VARCHAR(100),
+        staff VARCHAR(100)
+      );
+    `);
+    
+    console.log("Table created successfully!");
+    process.exit(0);
+  } catch (err) {
+    console.error("Error creating schema:", err);
+    process.exit(1);
+  }
+}
+
+fixSchema();
