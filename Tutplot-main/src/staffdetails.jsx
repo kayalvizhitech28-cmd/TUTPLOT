@@ -45,6 +45,8 @@ function Staffdetails() {
     specialization: "",
     joiningdate: "",
   });
+  const [dobInputType, setDobInputType] = useState("text");
+  const [joiningInputType, setJoiningInputType] = useState("text");
 
   const handleChange = (e) => {
     setFormData({
@@ -101,13 +103,31 @@ function Staffdetails() {
           <h2>Staff Details Form</h2>
           <form onSubmit={handleSubmit}>
             <input name="name" placeholder="Staff Name" onChange={handleChange} required />
-            <input type="date" name="dob" onChange={handleChange} required />
+            <input
+              type={dobInputType}
+              name="dob"
+              placeholder="Date of Birth"
+              value={formData.dob}
+              onFocus={() => setDobInputType("date")}
+              onBlur={() => { if (!formData.dob) setDobInputType("text"); }}
+              onChange={handleChange}
+              required
+            />
             <input name="address" placeholder="Address" onChange={handleChange} required />
             <input name="contactnumber" placeholder="Contact Number" onChange={handleChange} required />
             <input name="emailid" placeholder="Email ID" onChange={handleChange} required />
             <input name="qualification" placeholder="Qualification" onChange={handleChange} required />
             <input name="specialization" placeholder="Specialization" onChange={handleChange} required />
-            <input type="date" name="joiningdate" placeholder="Joining Date" onChange={handleChange} required />
+            <input
+              type={joiningInputType}
+              name="joiningdate"
+              placeholder="Joining Date"
+              value={formData.joiningdate}
+              onFocus={() => setJoiningInputType("date")}
+              onBlur={() => { if (!formData.joiningdate) setJoiningInputType("text"); }}
+              onChange={handleChange}
+              required
+            />
             <button type="submit">Submit</button>
           </form>
         </div>

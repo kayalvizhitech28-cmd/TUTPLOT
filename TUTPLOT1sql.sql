@@ -83,6 +83,13 @@ select*from tutplot1.student_application_table01;
 alter table tutplot1.student_application_table01
 add student_code as ('SDT'+right('000'+cast(student_id as varchar(20)),3)) persisted;
 
+ALTER TABLE tutplot1.student_application_table01
+ADD total_fees int,
+    pending_fees int;
+
+ALTER TABLE tutplot1.student_application_table01
+ADD group_class varchar(90);
+  
 
 create table tutplot1.staff_application_table1 (
 staff_id int primary key,

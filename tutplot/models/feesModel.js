@@ -1,5 +1,12 @@
 const { poolPromise, sql } = require("../config/db");
 
+function parseSafeInt(val) {
+  if (val === undefined || val === null) return 0;
+  const cleaned = val.toString().replace(/[₹$,\s]/g, "").trim();
+  const parsed = parseInt(cleaned, 10);
+  return isNaN(parsed) ? 0 : parsed;
+}
+
 async function getAllFeess() {
   const pool = await poolPromise;
   const result = await pool.request().query(`
@@ -27,10 +34,10 @@ async function createFees(data) {
 
   request.input('payment_id', sql.Int, nextId);
   request.input('student_id', sql.Int, data.student_id);
-  request.input('total_fees', sql.Int, data.total_fees || data.totalfees);
-  request.input('fees_paid', sql.Int, data.fees_paid || data.feespaid);
+  request.input('total_fees', sql.Int, parseSafeInt(data.total_fees || data.totalfees));
+  request.input('fees_paid', sql.Int, parseSafeInt(data.fees_paid || data.feespaid));
   request.input('date_of_pay', sql.Date, safeDate(data.date_of_pay || data.dateofpayment));
-  request.input('pending_fees', sql.Int, data.pending_fees || data.pendingfees);
+  request.input('pending_fees', sql.Int, parseSafeInt(data.pending_fees || data.pendingfees));
   request.input('payment_method', sql.VarChar, data.payment_method || data.paymentment || 'cash');
 
   const query = `

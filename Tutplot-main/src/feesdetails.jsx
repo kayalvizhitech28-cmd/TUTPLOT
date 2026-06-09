@@ -16,25 +16,38 @@ function Feesdetails() {
   const [formData, setFormData] = useState({
     student_id: "",
     class: "",
+    group: "",
     totalfees: "",
     feespaid: "",
     pendingfees: "",
     dateofpayment: "",
     paymentment: "",
   });
+  const [paymentInputType, setPaymentInputType] = useState("text");
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     let newFormData = { ...formData, [name]: value };
 
+    if (name === "class") {
+      // when class is changed, clear selected student, group, and reset fee fields
+      newFormData.student_id = "";
+      newFormData.group = "";
+      newFormData.totalfees = "";
+      newFormData.feespaid = "";
+      newFormData.pendingfees = "";
+    }
+
     if (name === "student_id") {
       const selectedStudent = studentsList.find(s => String(s.student_id) === String(value));
       if (selectedStudent) {
         newFormData.class = selectedStudent.class || "";
+        newFormData.group = selectedStudent.group || selectedStudent.Group || selectedStudent.group_name || selectedStudent.groupName || newFormData.group;
         newFormData.totalfees = selectedStudent.total_fees || "";
         newFormData.feespaid = ""; // reset current payment field when switching student
       } else {
         newFormData.class = "";
+        newFormData.group = "";
         newFormData.totalfees = "";
         newFormData.feespaid = "";
       }
@@ -57,6 +70,7 @@ function Feesdetails() {
 
     setFormData(newFormData);
   };
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -89,17 +103,36 @@ function Feesdetails() {
         <form onSubmit={handleSubmit}>
           <select name="student_id" value={formData.student_id} onChange={handleChange} required>
             <option value="">Select Student Name</option>
-            {studentsList.map(student => (
-              <option key={student.student_id} value={student.student_id}>
-                {student.student_name}
-              </option>
-            ))}
+            {studentsList
+              .filter(s => {
+                if (!formData.class) return true;
+                return String(s.class) === String(formData.class);
+              })
+              .map(student => (
+                <option key={student.student_id} value={student.student_id}>
+                  {student.student_name}
+                </option>
+              ))}
           </select>
-          <input name="class" value={formData.class} placeholder="Class" onChange={handleChange} required />
+          <select name="class" value={formData.class} onChange={handleChange} required>
+            <option value="">Select Class</option>
+            <option value="10">10</option>
+            <option value="11">11</option>
+            <option value="12">12</option>
+          </select>
           <input type="number" name="totalfees" value={formData.totalfees} placeholder="Total Fees" onChange={handleChange} required />
           <input type="number" name="feespaid" value={formData.feespaid} placeholder="Fees Paid" onChange={handleChange} required />
           <input type="number" name="pendingfees" value={formData.pendingfees} placeholder="Pending Fees" onChange={handleChange} required readOnly />
-          <input type="date" name="dateofpayment" value={formData.dateofpayment} placeholder="Date of Payment" onChange={handleChange} required />
+          <input
+            type={paymentInputType}
+            name="dateofpayment"
+            value={formData.dateofpayment}
+            placeholder="Date of Payment"
+            onFocus={() => setPaymentInputType("date")}
+            onBlur={() => { if (!formData.dateofpayment) setPaymentInputType("text"); }}
+            onChange={handleChange}
+            required
+          />
           <select name="paymentment" value={formData.paymentment} onChange={handleChange} required>
             <option value="">Select Payment Method</option>
             <option value="gpay">GPay</option>

@@ -11,6 +11,7 @@ function ExamsMarks() {
 
   // State for fetched DB data
   const [dbMarks, setDbMarks] = useState([]);
+  const [studentsList, setStudentsList] = useState([]);
 
   useEffect(() => {
     if (viewMode === "view") {
@@ -41,9 +42,18 @@ function ExamsMarks() {
   const [examData, setExamData] = useState({
     student: "",
     class_name: "10th",
+    group: "",
     exam: "",
     date: "",
   });
+  const [dateInputType, setDateInputType] = useState("text");
+
+  useEffect(() => {
+    fetch("http://localhost:3000/api/students")
+      .then(res => res.json())
+      .then(data => setStudentsList(data || []))
+      .catch(err => console.error("Failed to fetch students", err));
+  }, []);
 
   const [subjects, setSubjects] = useState([
     { subject: "", code: "", mark: "" },
@@ -62,12 +72,11 @@ function ExamsMarks() {
       .then(res => res.json())
       .then(data => {
         setAllTimetables(data);
-        const uniqueClasses = Array.from(new Set(data.map(d => d.class_name)));
-        if (uniqueClasses.length > 0) {
-          setAvailableClasses(uniqueClasses);
-          if (!uniqueClasses.includes(examData.class_name)) {
-            setExamData(prev => ({ ...prev, class_name: uniqueClasses[0] }));
-          }
+        // Force available classes to only 10th,11th,12th regardless of timetable
+        const allowed = ["10th", "11th", "12th"];
+        setAvailableClasses(allowed);
+        if (!allowed.includes(examData.class_name)) {
+          setExamData(prev => ({ ...prev, class_name: allowed[0] }));
         }
       })
       .catch(err => console.error("Failed to fetch timetable", err));
@@ -87,6 +96,8 @@ function ExamsMarks() {
       setAvailableSubjects(uniqueSubs);
     }
   }, [examData.class_name, allTimetables]);
+
+  // group input will be free-text for 11/12 (no derived groups)
 
   function handleChange(e) {
     setExamData({
@@ -162,14 +173,44 @@ function ExamsMarks() {
         {viewMode === "add" ? (
           <>
             <div className="top-bar">
-              <input type="text" name="student" placeholder="Student Name" value={examData.student} onChange={handleChange} />
               <select name="class_name" value={examData.class_name} onChange={handleChange} style={{ padding: '8px', borderRadius: '4px' }}>
                 {availableClasses.map(c => (
                   <option key={c} value={c}>{c}</option>
                 ))}
               </select>
+
+              {(String(examData.class_name || "").includes("11") || String(examData.class_name || "").includes("12")) && (
+                <input type="text" name="group" placeholder="Group" value={examData.group} onChange={handleChange} style={{ padding: '8px', borderRadius: '4px' }} />
+              )}
+
+              <select name="student" value={examData.student} onChange={handleChange} style={{ padding: '8px', borderRadius: '4px' }}>
+                <option value="">Select Student</option>
+                {studentsList
+                  .filter(s => {
+                    const sc = String(s.class || s.class_name || "").replace(/\D/g, "");
+                    const tc = String(examData.class_name || "").replace(/\D/g, "");
+                    if (tc && sc !== tc) return false;
+                    const sg = (s.Group || s.group || s.group_name || s.groupName || "");
+                    if (examData.group && sg !== examData.group) return false;
+                    return true;
+                  })
+                  .map(s => (
+                    <option key={s.student_id || s.id} value={s.student_name || s.student_name}>
+                      {s.student_name}
+                    </option>
+                  ))}
+              </select>
+
               <input type="text" name="exam" placeholder="Exam Name" value={examData.exam} onChange={handleChange} />
-              <input type="date" name="date" value={examData.date} onChange={handleChange} />
+              <input
+                type={dateInputType}
+                name="date"
+                placeholder="Exam Date"
+                value={examData.date}
+                onFocus={() => setDateInputType("date")}
+                onBlur={() => { if (!examData.date) setDateInputType("text"); }}
+                onChange={handleChange}
+              />
             </div>
 
             <div className="form" style={{ display: 'flex', flexDirection: 'column', gap: '15px', alignItems: 'center' }}>

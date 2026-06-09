@@ -22,6 +22,7 @@ function StudentAdmission() {
             id: s.student_id,
             name: s.student_name,
             class: s.class || "Not Assigned",
+            group: s.group_class || "",
             dob: s.date_of_birth ? s.date_of_birth.split('T')[0] : "N/A",
             motherName: s.mother_name || "N/A", 
             parent: s.father_name || "N/A",     
@@ -39,12 +40,13 @@ function StudentAdmission() {
 
   const filteredStudents = filterClass === "All" 
     ? dbStudents 
-    : dbStudents.filter(s => s.class === filterClass);
+    : dbStudents.filter(s => String(s.class) === String(filterClass));
 
   const [formData, setFormData] = useState({
     Name: "",
     DateofBirth: "",
     Standard: "",
+    Group: "",
     MotherName: "",
     FatherName: "",
     schoolName: "",
@@ -52,16 +54,25 @@ function StudentAdmission() {
     contact: "",
     Address: "",
   });
+  const [dobInputType, setDobInputType] = useState("text");
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: name === "fee" ? value.replace(/[^0-9,]/g, "") : value,
+      ...(name === "Standard" && value !== "11th" && value !== "12th" ? { Group: "" } : {}),
+    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if ((formData.Standard === "11th" || formData.Standard === "12th") && !formData.Group.trim()) {
+      alert("Please enter the group for 11th/12th class before submitting.");
+      return;
+    }
+
     try {
       const response = await fetch("http://localhost:3000/api/students", {
         method: "POST",
@@ -109,13 +120,36 @@ function StudentAdmission() {
           <h2>Student Admission Form</h2>
           <form onSubmit={handleSubmit}>
             <input name="Name" placeholder="Student Name" onChange={handleChange} required />
-            <input type="date" name="DateofBirth" onChange={handleChange} required />
-            <input name="Standard" placeholder="Class" onChange={handleChange} required />
+            <input
+              type={dobInputType}
+              name="DateofBirth"
+              placeholder="Date of Birth"
+              value={formData.DateofBirth}
+              onFocus={() => setDobInputType("date")}
+              onBlur={() => { if (!formData.DateofBirth) setDobInputType("text"); }}
+              onChange={handleChange}
+              required
+            />
+            <select name="Standard" value={formData.Standard} onChange={handleChange} required>
+              <option value="">Select Class</option>
+              <option value="10">10th</option>
+              <option value="11th">11th</option>
+              <option value="12th">12th</option>
+            </select>
+            {(formData.Standard === "11th" || formData.Standard === "12th") && (
+              <input
+                name="Group"
+                placeholder={`${formData.Standard} Group`}
+                value={formData.Group}
+                onChange={handleChange}
+                required
+              />
+            )}
             <input name="MotherName" placeholder="Mother Name" onChange={handleChange} required />
             <input name="FatherName" placeholder="Father Name" onChange={handleChange} required />
             <input name="schoolName" placeholder="School Name" onChange={handleChange} required />
             <input name="contact" placeholder="Contact Number" onChange={handleChange} required />
-            <input name="fee" placeholder="Fees" onChange={handleChange} />
+            <input name="fee" placeholder="Fees" value={formData.fee} onChange={handleChange} />
             <textarea name="Address" placeholder="Address" onChange={handleChange} required />
             <button type="submit">Submit</button>
           </form>
@@ -126,9 +160,9 @@ function StudentAdmission() {
             <label>Filter by Class: </label>
             <select value={filterClass} onChange={(e) => setFilterClass(e.target.value)}>
               <option value="All">All Classes</option>
-              <option value="10th">10th</option>
-              <option value="11th">11th</option>
-              <option value="12th">12th</option>
+              <option value="10">10th</option>
+              <option value="11">11th</option>
+              <option value="12">12th</option>
             </select>
           </div>
           
@@ -138,6 +172,7 @@ function StudentAdmission() {
                 <th>ID</th>
                 <th>Student Name</th>
                 <th>Class</th>
+                <th>Group</th>
                 <th>Parent Name</th>
                 <th>Contact</th>
               </tr>
@@ -149,13 +184,14 @@ function StudentAdmission() {
                     <td>{student.id}</td>
                     <td>{student.name}</td>
                     <td><span className={`badge class-${student.class}`}>{student.class}</span></td>
+                    <td>{student.group || "-"}</td>
                     <td>{student.parent}</td>
                     <td>{student.contact}</td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan="5" className="no-data">No students found in this class.</td>
+                  <td colSpan="6" className="no-data">No students found in this class.</td>
                 </tr>
               )}
             </tbody>
@@ -173,6 +209,7 @@ function StudentAdmission() {
             <p><strong>Name:</strong> {selectedStudent.name}</p>
             <p><strong>DOB:</strong> {selectedStudent.dob}</p>
             <p><strong>Class:</strong> {selectedStudent.class}</p>
+            <p><strong>Group:</strong> {selectedStudent.group || "N/A"}</p>
             <p><strong>Mother Name:</strong> {selectedStudent.motherName}</p>
             <p><strong>Father Name:</strong> {selectedStudent.parent}</p>
             <p><strong>Contact:</strong> {selectedStudent.contact}</p>

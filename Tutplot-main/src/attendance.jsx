@@ -7,6 +7,7 @@ function Attendance() {
   const navigate = useNavigate();
   const [form, setForm] = useState({
     standard: "",
+    group: "",
     date: "",
     staff: "",
   });
@@ -15,16 +16,48 @@ function Attendance() {
   const [viewMode, setViewMode] = useState("add"); // "add" or "view"
   const [filterClass, setFilterClass] = useState("");
   const [filterDate, setFilterDate] = useState("");
+  const [filterGroup, setFilterGroup] = useState("");
   const [dbAttendance, setDbAttendance] = useState([]);
+  const [filtersInitialized, setFiltersInitialized] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [dateInputType, setDateInputType] = useState("text");
+  const [filterDateInputType, setFilterDateInputType] = useState("text");
 
   const [students, setStudents] = useState([]);
+  const [staffList, setStaffList] = useState([]);
 
   useEffect(() => {
     if (viewMode === "view") {
       fetch("http://localhost:3000/api/attendance")
         .then(res => res.json())
-        .then(data => setDbAttendance(data))
+        .then((data) => {
+          setDbAttendance(data);
+
+          if (data && data.length > 0 && !filtersInitialized) {
+            const latest = data.reduce((latestRow, currentRow) => {
+              const latestDate = latestRow?.date ? new Date(latestRow.date) : null;
+              const currentDate = currentRow?.date ? new Date(currentRow.date) : null;
+              if (!latestDate || (currentDate && currentDate > latestDate)) {
+                return currentRow;
+              }
+              return latestRow;
+            }, null);
+
+            if (latest) {
+              setFilterClass(latest.standard || "");
+              setFilterGroup(latest.group || latest.Group || "");
+              setFilterDate(latest.date ? new Date(latest.date).toISOString().split("T")[0] : "");
+              setFiltersInitialized(true);
+            }
+          }
+        })
         .catch(err => console.error("Failed to fetch attendance", err));
+    }
+  }, [viewMode, filtersInitialized]);
+
+  useEffect(() => {
+    if (viewMode !== "view") {
+      setFiltersInitialized(false);
     }
   }, [viewMode]);
 
@@ -35,6 +68,12 @@ function Attendance() {
         let filtered = data;
         if (form.standard) {
           filtered = data.filter(s => String(s.class) === form.standard);
+        }
+        if (form.group && form.group.trim()) {
+          filtered = filtered.filter(s => {
+            const sg = (s.Group || s.group || s.group_name || s.groupName || "");
+            return String(sg) === String(form.group);
+          });
         }
         
         const mapped = filtered.map((s) => ({
@@ -47,8 +86,26 @@ function Attendance() {
       .catch((err) => console.error("Failed to load students", err));
   }, [form.standard]);
 
+  useEffect(() => {
+    // load staff list for handling staff dropdown
+    fetch("http://localhost:3000/api/staff")
+      .then(res => res.json())
+      .then(data => setStaffList(data || []))
+      .catch(err => console.error("Failed to load staff", err));
+  }, []);
+
   function handleChange(e) {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    // If class/standard changes, reset student selection so dropdown shows only that class
+    if (name === "standard") {
+      setSearch("");
+      // clear group when changing class
+      setForm(prev => ({ ...prev, group: "" }));
+    }
+    if (name === "group") {
+      setSearch("");
+    }
+    setForm({ ...form, [name]: value });
   }
 
   function setStatus(id, newStatus) {
@@ -75,6 +132,23 @@ function Attendance() {
   const absentCount = students.length - presentCount;
 
   async function handleSubmit() {
+    setErrorMessage("");
+
+    if (!form.standard) {
+      setErrorMessage("Please select a class before submitting.");
+      return;
+    }
+
+    if (!form.date) {
+      setErrorMessage("Please enter the attendance date before submitting.");
+      return;
+    }
+
+    if (!form.staff.trim()) {
+      setErrorMessage("Please enter the handling staff name before submitting.");
+      return;
+    }
+
     try {
       const response = await fetch("http://localhost:3000/api/attendance", {
         method: "POST",
@@ -134,28 +208,54 @@ function Attendance() {
           </select>
 
           <input
-            type="date"
+            type={dateInputType}
             name="date"
+            placeholder="Date"
             value={form.date}
+            onFocus={() => setDateInputType("date")}
+            onBlur={() => { if (!form.date) setDateInputType("text"); }}
             onChange={handleChange}
           />
 
-          <input
-            type="text"
+          <select
             name="staff"
-            placeholder="Handling Staff"
             value={form.staff}
             onChange={handleChange}
-          />
+            style={{ padding: '8px', borderRadius: '4px' }}
+          >
+            <option value="">Select Handling Staff</option>
+            {staffList.map((s) => (
+              <option key={s.staff_id || s.id || s.email_id} value={s.staff_name || s.staff_name}>
+                {s.staff_name}
+              </option>
+            ))}
+          </select>
+            {(form.standard === "11" || form.standard === "12") && (
+              <input
+                type="text"
+                name="group"
+                placeholder="Group"
+                value={form.group}
+                onChange={handleChange}
+                style={{ padding: '8px', borderRadius: '4px' }}
+              />
+            )}
         </div>
 
         {/* Controls */}
         <div className="controls">
-          <input
-            type="text"
-            placeholder="Search student..."
+          <select
+            value={search}
             onChange={(e) => setSearch(e.target.value)}
-          />
+            style={{ padding: '8px', borderRadius: '4px' }}
+          >
+            <option value="">Select Student</option>
+            {students.map((s) => (
+              <option key={s.id} value={s.name}>
+                {s.name}
+              </option>
+            ))}
+          </select>
 
           <button onClick={markAllPresent}>Mark All Present</button>
           <button onClick={clearAll}>Clear All</button>
@@ -204,7 +304,16 @@ function Attendance() {
           <div>Total: {students.length}</div>
         </div>
 
-            <button className="submit-btn" onClick={handleSubmit}>
+        {errorMessage && (
+          <div style={{ color: "#b91c1c", marginBottom: "12px" }}>{errorMessage}</div>
+        )}
+
+            <button
+              className="submit-btn"
+              onClick={handleSubmit}
+              disabled={!form.standard || !form.date || !form.staff.trim()}
+              style={{ opacity: !form.standard || !form.date || !form.staff.trim() ? 0.6 : 1, cursor: !form.standard || !form.date || !form.staff.trim() ? "not-allowed" : "pointer" }}
+            >
               SUBMIT
             </button>
           </>
@@ -218,7 +327,22 @@ function Attendance() {
                 <option value="11">11th Standard</option>
                 <option value="12">12th Standard</option>
               </select>
-              <input type="date" value={filterDate} onChange={(e) => setFilterDate(e.target.value)} style={{ padding: '8px', borderRadius: '4px' }} />
+              <input
+                type="text"
+                value={filterGroup}
+                placeholder="Group"
+                onChange={(e) => setFilterGroup(e.target.value)}
+                style={{ padding: '8px', borderRadius: '4px' }}
+              />
+              <input
+                type={filterDateInputType}
+                value={filterDate}
+                placeholder="Date"
+                onFocus={() => setFilterDateInputType("date")}
+                onBlur={() => { if (!filterDate) setFilterDateInputType("text"); }}
+                onChange={(e) => setFilterDate(e.target.value)}
+                style={{ padding: '8px', borderRadius: '4px' }}
+              />
             </div>
             
             {/* Table */}
@@ -231,7 +355,13 @@ function Attendance() {
               </div>
               
               {(() => {
-                const viewFilteredAttendance = dbAttendance.filter(a => (!filterClass || String(a.standard) === String(filterClass)) && (!filterDate || (a.date && new Date(a.date).toISOString().split('T')[0] === filterDate)));
+                const getRecordGroup = (r) => (r.group || r.Group || r.group_name || r.groupName || "");
+                const viewFilteredAttendance = dbAttendance.filter(a => {
+                  const classMatch = !filterClass || String(a.standard) === String(filterClass);
+                  const dateMatch = !filterDate || (a.date && new Date(a.date).toISOString().split('T')[0] === filterDate);
+                  const groupMatch = !filterGroup || String(getRecordGroup(a)) === String(filterGroup);
+                  return classMatch && dateMatch && groupMatch;
+                });
                 const viewPresentCount = viewFilteredAttendance.filter(a => a.status === "present").length;
                 const viewAbsentCount = viewFilteredAttendance.length - viewPresentCount;
 
