@@ -6,3 +6,4 @@ router.get("/", getStudents);
 router.post("/", addStudent);
 
 module.exports = router;
+

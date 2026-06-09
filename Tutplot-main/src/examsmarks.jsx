@@ -15,7 +15,7 @@ function ExamsMarks() {
 
   useEffect(() => {
     if (viewMode === "view") {
-      fetch("http://localhost:3000/api/exams")
+      fetch("https://tutplot.onrender.com/api/exams")
         .then(res => res.json())
         .then(data => {
           const mappedData = (data || []).map(s => {
@@ -49,7 +49,7 @@ function ExamsMarks() {
   const [dateInputType, setDateInputType] = useState("text");
 
   useEffect(() => {
-    fetch("http://localhost:3000/api/students")
+    fetch("https://tutplot.onrender.com/api/students")
       .then(res => res.json())
       .then(data => setStudentsList(data || []))
       .catch(err => console.error("Failed to fetch students", err));
@@ -68,7 +68,7 @@ function ExamsMarks() {
   const [availableClasses, setAvailableClasses] = useState(["10th", "11th", "12th"]);
 
   useEffect(() => {
-    fetch("http://localhost:3000/api/timetable")
+    fetch("https://tutplot.onrender.com/api/timetable")
       .then(res => res.json())
       .then(data => {
         setAllTimetables(data);
@@ -131,7 +131,7 @@ function ExamsMarks() {
         subjects: subjects
       };
 
-      const response = await fetch("http://localhost:3000/api/exams", {
+      const response = await fetch("https://tutplot.onrender.com/api/exams", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)

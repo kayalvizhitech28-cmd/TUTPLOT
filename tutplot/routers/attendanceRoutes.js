@@ -6,3 +6,4 @@ router.get("/", getAttendances);
 router.post("/", addAttendance);
 
 module.exports = router;
+

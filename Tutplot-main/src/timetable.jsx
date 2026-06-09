@@ -25,7 +25,7 @@ function Timetable() {
 
   useEffect(() => {
     if (viewMode === "view") {
-      fetch("http://localhost:3000/api/timetable")
+      fetch("https://tutplot.onrender.com/api/timetable")
         .then(res => res.json())
         .then(data => {
           if (Array.isArray(data)) {
@@ -72,7 +72,7 @@ function Timetable() {
         schedule: scheduleData
       };
       
-      const response = await fetch("http://localhost:3000/api/timetable", {
+      const response = await fetch("https://tutplot.onrender.com/api/timetable", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
@@ -240,3 +240,4 @@ function Timetable() {
 }
 
 export default Timetable;
+

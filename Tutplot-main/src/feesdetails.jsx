@@ -7,7 +7,7 @@ function Feesdetails() {
   const [studentsList, setStudentsList] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:3000/api/students")
+    fetch("https://tutplot.onrender.com/api/students")
       .then(res => res.json())
       .then(data => setStudentsList(data))
       .catch(err => console.error("Failed to fetch students", err));
@@ -75,7 +75,7 @@ function Feesdetails() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("http://localhost:3000/api/fees", {
+      const response = await fetch("https://tutplot.onrender.com/api/fees", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData)

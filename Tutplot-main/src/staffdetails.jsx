@@ -10,7 +10,7 @@ function Staffdetails() {
   const [staffData, setStaffData] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:3000/api/staff")
+    fetch("https://tutplot.onrender.com/api/staff")
       .then(res => res.json())
       .then(data => {
         // Map database fields to frontend structure
@@ -58,7 +58,7 @@ function Staffdetails() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("http://localhost:3000/api/staff", {
+      const response = await fetch("https://tutplot.onrender.com/api/staff", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData)

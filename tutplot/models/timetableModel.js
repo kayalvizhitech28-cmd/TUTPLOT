@@ -34,3 +34,4 @@ async function createTimetable(data) {
 }
 
 module.exports = { getAllTimetables, createTimetable };
+

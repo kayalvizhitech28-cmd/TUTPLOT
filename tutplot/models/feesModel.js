@@ -55,3 +55,4 @@ async function createFees(data) {
 }
 
 module.exports = { getAllFeess, createFees };
+

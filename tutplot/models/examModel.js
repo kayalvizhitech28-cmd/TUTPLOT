@@ -67,3 +67,4 @@ async function createExam(data) {
 }
 
 module.exports = { getAllExams, createExam };
+

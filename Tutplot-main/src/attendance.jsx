@@ -28,7 +28,7 @@ function Attendance() {
 
   useEffect(() => {
     if (viewMode === "view") {
-      fetch("http://localhost:3000/api/attendance")
+      fetch("https://tutplot.onrender.com/api/attendance")
         .then(res => res.json())
         .then((data) => {
           setDbAttendance(data);
@@ -62,7 +62,7 @@ function Attendance() {
   }, [viewMode]);
 
   useEffect(() => {
-    fetch("http://localhost:3000/api/students")
+    fetch("https://tutplot.onrender.com/api/students")
       .then((res) => res.json())
       .then((data) => {
         let filtered = data;
@@ -88,7 +88,7 @@ function Attendance() {
 
   useEffect(() => {
     // load staff list for handling staff dropdown
-    fetch("http://localhost:3000/api/staff")
+    fetch("https://tutplot.onrender.com/api/staff")
       .then(res => res.json())
       .then(data => setStaffList(data || []))
       .catch(err => console.error("Failed to load staff", err));
@@ -150,7 +150,7 @@ function Attendance() {
     }
 
     try {
-      const response = await fetch("http://localhost:3000/api/attendance", {
+      const response = await fetch("https://tutplot.onrender.com/api/attendance", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ form, students })

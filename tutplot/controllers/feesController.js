@@ -21,3 +21,4 @@ async function addFees(req, res) {
 }
 
 module.exports = { getFeess, addFees };
+

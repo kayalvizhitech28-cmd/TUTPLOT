@@ -6,3 +6,4 @@ router.get("/", getStaffs);
 router.post("/", addStaff);
 
 module.exports = router;
+

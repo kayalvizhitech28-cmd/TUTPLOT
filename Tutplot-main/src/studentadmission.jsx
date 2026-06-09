@@ -14,7 +14,7 @@ function StudentAdmission() {
 
   useEffect(() => {
     if (viewMode === "view") {
-      fetch("http://localhost:3000/api/students")
+      fetch("https://tutplot.onrender.com/api/students")
         .then(res => res.json())
         .then(data => {
           // Map DB fields to frontend format
@@ -74,7 +74,7 @@ function StudentAdmission() {
     }
 
     try {
-      const response = await fetch("http://localhost:3000/api/students", {
+      const response = await fetch("https://tutplot.onrender.com/api/students", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),

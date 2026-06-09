@@ -21,3 +21,4 @@ async function addStudent(req, res) {
 }
 
 module.exports = { getStudents, addStudent };
+

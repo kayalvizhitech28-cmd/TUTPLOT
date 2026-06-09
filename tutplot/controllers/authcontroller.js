@@ -47,3 +47,4 @@ async function listUsers(req, res) {
 }
 
 module.exports = { signup, login, listUsers };
+

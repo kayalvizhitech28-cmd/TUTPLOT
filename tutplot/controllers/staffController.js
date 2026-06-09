@@ -21,3 +21,4 @@ async function addStaff(req, res) {
 }
 
 module.exports = { getStaffs, addStaff };
+

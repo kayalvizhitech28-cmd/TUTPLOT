@@ -21,3 +21,4 @@ async function addAttendance(req, res) {
 }
 
 module.exports = { getAttendances, addAttendance };
+

@@ -40,3 +40,4 @@ async function createAttendance(data) {
 }
 
 module.exports = { getAllAttendances, createAttendance };
+

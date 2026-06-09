@@ -35,3 +35,4 @@ async function findUserByEmail(email) {
 }
 
 module.exports = { createUser, getUsers, findUserByEmail };
+

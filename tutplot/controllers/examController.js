@@ -21,3 +21,4 @@ async function addExam(req, res) {
 }
 
 module.exports = { getExams, addExam };
+

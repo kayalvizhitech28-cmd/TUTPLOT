@@ -21,3 +21,4 @@ async function addTimetable(req, res) {
 }
 
 module.exports = { getTimetables, addTimetable };
+

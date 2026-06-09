@@ -65,3 +65,4 @@ async function createStudent(data) {
 }
 
 module.exports = { getAllStudents, createStudent };
+

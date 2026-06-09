@@ -6,3 +6,4 @@ router.get("/", getExams);
 router.post("/", addExam);
 
 module.exports = router;
+

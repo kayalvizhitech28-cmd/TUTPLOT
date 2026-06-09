@@ -11,3 +11,4 @@ poolPromise.then(async pool => {
     process.exit(0);
   }
 });
+

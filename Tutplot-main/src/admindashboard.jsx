@@ -22,10 +22,10 @@ function AdminDashboard() {
     async function fetchDashboardData() {
       try {
         const [studentsRes, staffRes, feesRes, attendanceRes] = await Promise.all([
-          fetch("http://localhost:3000/api/students"),
-          fetch("http://localhost:3000/api/staff"),
-          fetch("http://localhost:3000/api/fees"),
-          fetch("http://localhost:3000/api/attendance")
+          fetch("https://tutplot.onrender.com/api/students"),
+          fetch("https://tutplot.onrender.com/api/staff"),
+          fetch("https://tutplot.onrender.com/api/fees"),
+          fetch("https://tutplot.onrender.com/api/attendance")
         ]);
 
         const students = await studentsRes.json();

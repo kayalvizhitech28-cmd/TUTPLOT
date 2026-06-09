@@ -6,3 +6,4 @@ router.get("/", getTimetables);
 router.post("/", addTimetable);
 
 module.exports = router;
+
