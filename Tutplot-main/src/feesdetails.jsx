@@ -147,3 +147,4 @@ function Feesdetails() {
 }
 
 export default Feesdetails;
+
