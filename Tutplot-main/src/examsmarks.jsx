@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "./sidebar";   
-import "./ExamsMarks.css"; 
+import "./examsmarks.css"; 
 
 function ExamsMarks() {
   const navigate = useNavigate();

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import "./Timetable.css";
+import "./timetable.css";
 import Sidebar from "./sidebar";  
 
 function Timetable() {

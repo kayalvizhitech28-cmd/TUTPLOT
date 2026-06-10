@@ -1,5 +1,5 @@
 import React from "react";
-import "./Sidebar.css";
+import "./sidebar.css";
 import { useNavigate } from "react-router-dom";
 import AdminDashboard from "./admindashboard";
 import StudentAdmission from "./studentadmission";
