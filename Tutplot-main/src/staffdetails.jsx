@@ -2,11 +2,14 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "./sidebar";
 import "./staffdetails.css";
+import "./ui-buttons.css";
 function Staffdetails() {
   const navigate = useNavigate();
   const [viewMode, setViewMode] = useState("add"); // "add" or "view"
   const [filterClass, setFilterClass] = useState("All");
   const [selectedStaff, setSelectedStaff] = useState(null);
+  const [isEditingStaff, setIsEditingStaff] = useState(false);
+  const [editStaffData, setEditStaffData] = useState(null);
   const [staffData, setStaffData] = useState([]);
 
   useEffect(() => {
@@ -75,6 +78,10 @@ function Staffdetails() {
     }
   };
 
+  const isValid = (
+    formData.name && formData.dob && formData.address && formData.contactnumber && formData.emailid && formData.qualification && formData.specialization && formData.joiningdate
+  );
+
   return (
     <div className="layout">
       <Sidebar />
@@ -128,7 +135,7 @@ function Staffdetails() {
               onChange={handleChange}
               required
             />
-            <button type="submit">Submit</button>
+            <button type="submit" disabled={!isValid}>Submit</button>
           </form>
         </div>
       ) : (
@@ -179,19 +186,64 @@ function Staffdetails() {
       <div className="modal-overlay" onClick={() => setSelectedStaff(null)}>
         <div className="modal-content" onClick={e => e.stopPropagation()}>
           <h2>Staff Details</h2>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-            <p><strong>ID:</strong> {selectedStaff.id}</p>
-            <p><strong>Name:</strong> {selectedStaff.name}</p>
-            <p><strong>DOB:</strong> {selectedStaff.dob}</p>
-            <p><strong>Email:</strong> {selectedStaff.emailid}</p>
-            <p><strong>Contact:</strong> {selectedStaff.contact}</p>
-            <p><strong>Qualification:</strong> {selectedStaff.qualification}</p>
-            <p><strong>Subject:</strong> {selectedStaff.specialization}</p>
-            <p><strong>Handling Class:</strong> {selectedStaff.handlingClass}</p>
-            <p><strong>Joining Date:</strong> {selectedStaff.joiningdate}</p>
-            <p style={{ gridColumn: '1 / -1' }}><strong>Address:</strong> {selectedStaff.address}</p>
-          </div>
-          <button className="close-modal-btn" onClick={() => setSelectedStaff(null)}>Close</button>
+          {!isEditingStaff ? (
+            <>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                <p><strong>ID:</strong> {selectedStaff.id}</p>
+                <p><strong>Name:</strong> {selectedStaff.name}</p>
+                <p><strong>DOB:</strong> {selectedStaff.dob}</p>
+                <p><strong>Email:</strong> {selectedStaff.emailid}</p>
+                <p><strong>Contact:</strong> {selectedStaff.contact}</p>
+                <p><strong>Qualification:</strong> {selectedStaff.qualification}</p>
+                <p><strong>Subject:</strong> {selectedStaff.specialization}</p>
+                <p><strong>Handling Class:</strong> {selectedStaff.handlingClass}</p>
+                <p><strong>Joining Date:</strong> {selectedStaff.joiningdate}</p>
+                <p style={{ gridColumn: '1 / -1' }}><strong>Address:</strong> {selectedStaff.address}</p>
+              </div>
+              <div className="modal-actions">
+                <button className="action-btn edit small" onClick={() => { setIsEditingStaff(true); setEditStaffData({
+                  name: selectedStaff.name || '', dob: selectedStaff.dob || '', address: selectedStaff.address || '', contactnumber: selectedStaff.contact || '', emailid: selectedStaff.emailid || '', qualification: selectedStaff.qualification || '', specialization: selectedStaff.specialization || '', joiningdate: selectedStaff.joiningdate || ''
+                })}}>Edit</button>
+                <button className="action-btn delete small" onClick={async () => {
+                  if (!window.confirm('Delete this staff?')) return;
+                  try {
+                    const res = await fetch(`https://tutplot.onrender.com/api/staff/${selectedStaff.id}`, { method: 'DELETE' });
+                    if (res.ok) {
+                      setStaffData(prev => prev.filter(s => s.id !== selectedStaff.id));
+                      setSelectedStaff(null);
+                      alert('Staff deleted');
+                    } else alert('Delete failed');
+                  } catch (e) { console.error(e); alert('Delete failed'); }
+                }}>Delete</button>
+                <button className="action-btn ghost small" onClick={() => setSelectedStaff(null)}>Close</button>
+              </div>
+            </>
+          ) : (
+            <div style={{ display: 'grid', gap: '8px' }}>
+              <input value={editStaffData.name} onChange={(e)=>setEditStaffData({...editStaffData, name: e.target.value})} />
+              <input type="date" value={editStaffData.dob} onChange={(e)=>setEditStaffData({...editStaffData, dob: e.target.value})} />
+              <input value={editStaffData.address} onChange={(e)=>setEditStaffData({...editStaffData, address: e.target.value})} />
+              <input value={editStaffData.contactnumber} onChange={(e)=>setEditStaffData({...editStaffData, contactnumber: e.target.value})} />
+              <input value={editStaffData.emailid} onChange={(e)=>setEditStaffData({...editStaffData, emailid: e.target.value})} />
+              <input value={editStaffData.qualification} onChange={(e)=>setEditStaffData({...editStaffData, qualification: e.target.value})} />
+              <input value={editStaffData.specialization} onChange={(e)=>setEditStaffData({...editStaffData, specialization: e.target.value})} />
+              <input type="date" value={editStaffData.joiningdate} onChange={(e)=>setEditStaffData({...editStaffData, joiningdate: e.target.value})} />
+              <div className="modal-actions">
+                <button className="action-btn edit" onClick={async ()=>{
+                  try {
+                    const res = await fetch(`https://tutplot.onrender.com/api/staff/${selectedStaff.id}`, { method: 'PUT', headers: { 'Content-Type':'application/json'}, body: JSON.stringify(editStaffData) });
+                    if (res.ok) {
+                      setStaffData(prev => prev.map(s => s.id === selectedStaff.id ? ({ ...s, name: editStaffData.name, dob: editStaffData.dob, address: editStaffData.address, contact: editStaffData.contactnumber, emailid: editStaffData.emailid, qualification: editStaffData.qualification, specialization: editStaffData.specialization, joiningdate: editStaffData.joiningdate }) : s));
+                      setSelectedStaff(prev => ({ ...prev, name: editStaffData.name, dob: editStaffData.dob, address: editStaffData.address, contact: editStaffData.contactnumber, emailid: editStaffData.emailid, qualification: editStaffData.qualification, specialization: editStaffData.specialization, joiningdate: editStaffData.joiningdate }));
+                      setIsEditingStaff(false);
+                      alert('Staff updated');
+                    } else alert('Update failed');
+                  } catch (e) { console.error(e); alert('Update failed'); }
+                }}>Save</button>
+                <button className="action-btn ghost" onClick={()=>setIsEditingStaff(false)}>Cancel</button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     )}

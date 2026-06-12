@@ -92,6 +92,8 @@ function Feesdetails() {
     }
   };
 
+  const isValid = formData.student_id && formData.class && formData.totalfees && formData.feespaid && formData.dateofpayment && formData.paymentment;
+
   return (
     <div className="layout">
       <Sidebar />
@@ -139,7 +141,7 @@ function Feesdetails() {
             <option value="cash">Cash</option>
           </select>
 
-          <button type="submit">Submit</button>
+          <button type="submit" disabled={!isValid}>Submit</button>
         </form>
       </div>
     </div>

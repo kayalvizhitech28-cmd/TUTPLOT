@@ -10,10 +10,12 @@ const LoginPage = () => {
   const [phone, setPhone] = useState("");
   const [otp, setOtp] = useState("");
   const [newPassword, setNewPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
     try {
       const response = await fetch("https://tutplot.onrender.com/api/auth/login", {
         method: "POST",
@@ -31,6 +33,8 @@ const LoginPage = () => {
       }
     } catch (err) {
       alert("Server error, please try again later.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -57,9 +61,14 @@ const LoginPage = () => {
               className="input-field"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              disabled={isLoading}
             />
-            <button onClick={handleSubmit} className="login-btn">
-              LOG IN
+            <button
+              onClick={handleSubmit}
+              className="login-btn"
+              disabled={!email.trim() || !password.trim() || isLoading}
+            >
+              {isLoading ? "Loading..." : "LOG IN"}
             </button>
 
             <p className="forgot" onClick={() => setViewState("forgot_phone")}>

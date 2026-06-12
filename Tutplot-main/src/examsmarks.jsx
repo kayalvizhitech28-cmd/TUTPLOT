@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "./sidebar";   
 import "./examsmarks.css"; 
+import "./ui-buttons.css";
 
 function ExamsMarks() {
   const navigate = useNavigate();
@@ -84,7 +85,15 @@ function ExamsMarks() {
 
   useEffect(() => {
     if (allTimetables.length > 0) {
-      const classSubjects = allTimetables.filter(d => d.class_name === examData.class_name);
+      const classSubjects = allTimetables.filter(d => {
+        if (!d.class_name) return false;
+        const baseClass = d.class_name.split(" - ")[0].trim();
+        if (baseClass !== examData.class_name) return false;
+        if (examData.group && examData.group.trim()) {
+          return d.class_name.toLowerCase().includes(examData.group.trim().toLowerCase());
+        }
+        return true;
+      });
       const uniqueSubs = [];
       const seen = new Set();
       classSubjects.forEach(s => {
@@ -95,14 +104,24 @@ function ExamsMarks() {
       });
       setAvailableSubjects(uniqueSubs);
     }
-  }, [examData.class_name, allTimetables]);
+  }, [examData.class_name, examData.group, allTimetables]);
 
   // group input will be free-text for 11/12 (no derived groups)
 
   function handleChange(e) {
-    setExamData({
-      ...examData,
-      [e.target.name]: e.target.value,
+    const { name, value } = e.target;
+    setExamData(prev => {
+      const next = { ...prev, [name]: value };
+      if (name === "class_name") {
+        next.student = "";
+        if (!String(value).includes("11") && !String(value).includes("12")) {
+          next.group = "";
+        }
+      }
+      if (name === "group") {
+        next.student = "";
+      }
+      return next;
     });
   }
 
@@ -148,6 +167,9 @@ function ExamsMarks() {
     }
   }
 
+  const subjectsFilled = subjects.some(s => (s.subject && String(s.mark).trim() !== ""));
+  const isValid = examData.student && examData.class_name && examData.exam && examData.date && subjectsFilled;
+
   return (
     <div className="layout">
       <Sidebar />
@@ -187,16 +209,20 @@ function ExamsMarks() {
                 <option value="">Select Student</option>
                 {studentsList
                   .filter(s => {
-                    const sc = String(s.class || s.class_name || "").replace(/\D/g, "");
-                    const tc = String(examData.class_name || "").replace(/\D/g, "");
-                    if (tc && sc !== tc) return false;
-                    const sg = (s.Group || s.group || s.group_name || s.groupName || "");
-                    if (examData.group && sg !== examData.group) return false;
+                    const studentClass = String(s.class || s.class_name || "").replace(/\D/g, "");
+                    const selectedClass = String(examData.class_name || "").replace(/\D/g, "");
+                    if (selectedClass && studentClass !== selectedClass) return false;
+
+                    const selectedGroup = String(examData.group || "").trim().toLowerCase();
+                    if (selectedGroup) {
+                      const studentGroup = String(s.group_class || s.Group || s.group || s.group_name || s.groupName || "").trim().toLowerCase();
+                      return studentGroup === selectedGroup;
+                    }
                     return true;
                   })
                   .map(s => (
-                    <option key={s.student_id || s.id} value={s.student_name || s.student_name}>
-                      {s.student_name}
+                    <option key={s.student_id || s.id} value={s.student_name || s.name}>
+                      {s.student_name || s.name}
                     </option>
                   ))}
               </select>
@@ -238,7 +264,7 @@ function ExamsMarks() {
               </button>
             </div>
 
-            <button className="save-btn" onClick={handleSubmit}>
+            <button className="save-btn" onClick={handleSubmit} disabled={!isValid} style={{ opacity: !isValid ? 0.6 : 1, cursor: !isValid ? 'not-allowed' : 'pointer' }}>
               SAVE
             </button>
           </>

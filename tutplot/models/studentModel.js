@@ -64,5 +64,55 @@ async function createStudent(data) {
   return request.query(query);
 }
 
-module.exports = { getAllStudents, createStudent };
+async function updateStudent(id, data) {
+  const pool = await poolPromise;
+  const { Name, DateofBirth, Standard, Group, MotherName, FatherName, schoolName, Address, contact, fee } = data;
+
+  const request = pool.request();
+  request.input("student_id", id);
+  request.input("student_name", Name || '');
+  request.input("date_of_birth", DateofBirth || null);
+  
+  // Clean Standard to an integer, if possible, or null
+  const classInt = parseInt((Standard || "").toString().replace(/\D/g, ''), 10);
+  request.input("class", isNaN(classInt) ? null : classInt);
+  request.input("group_class", Group || null);
+  
+  request.input("mother_name", MotherName || '');
+  request.input("father_name", FatherName || '');
+  request.input("school_name", schoolName || '');
+  request.input("address", Address || '');
+  request.input("contact_number", contact || '');
+  
+  const feeInt = parseSafeInt(fee);
+  request.input("total_fees", feeInt);
+  request.input("pending_fees", feeInt);
+
+  const query = `
+    UPDATE tutplot1.student_application_table01 
+    SET student_name = @student_name,
+        date_of_birth = @date_of_birth,
+        class = @class,
+        group_class = @group_class,
+        mother_name = @mother_name,
+        father_name = @father_name,
+        school_name = @school_name,
+        address = @address,
+        contact_number = @contact_number,
+        total_fees = @total_fees,
+        pending_fees = @pending_fees
+    WHERE student_id = @student_id
+  `;
+  return request.query(query);
+}
+
+async function deleteStudent(id) {
+  const pool = await poolPromise;
+  const request = pool.request();
+  request.input("student_id", id);
+  const query = `DELETE FROM tutplot1.student_application_table01 WHERE student_id = @student_id`;
+  return request.query(query);
+}
+
+module.exports = { getAllStudents, createStudent, updateStudent, deleteStudent };
 

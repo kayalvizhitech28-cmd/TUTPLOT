@@ -1,0 +1,23 @@
+/* Reusable action button styles */
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+}
+.action-btn .icon { font-size: 14px; }
+.action-btn.edit { background: #2563eb; color: #fff; }
+.action-btn.edit:hover { background: #1e40af; }
+.action-btn.delete { background: #ef4444; color: #fff; }
+.action-btn.delete:hover { background: #b91c1c; }
+.action-btn.ghost { background: transparent; border: 1px solid #e5e7eb; color: #374151; }
+.action-btn.small { padding: 4px 8px; font-size: 13px; border-radius: 6px; }
+.action-btn.icon-only { padding: 6px; width: 36px; height: 36px; justify-content: center; }
+
+/* Modal button group spacing */
+.modal-actions { display: flex; gap: 8px; margin-top: 12px; }

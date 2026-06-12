@@ -11,6 +11,7 @@ const Signup = () => {
   });
 
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e) => {
     setFormData({
@@ -21,12 +22,12 @@ const Signup = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (formData.password !== formData.confirmPassword) {
       alert("Passwords do not match!");
       return;
     }
 
+    setIsLoading(true);
     try {
       const response = await fetch("https://tutplot.onrender.com/api/auth/signup", {
         method: "POST",
@@ -48,8 +49,12 @@ const Signup = () => {
       }
     } catch (err) {
       alert("Server error, please try again later.");
+    } finally {
+      setIsLoading(false);
     }
   };
+
+  const isValid = formData.email.trim() && formData.password.trim() && formData.confirmPassword.trim() && formData.mobile.trim() && formData.password === formData.confirmPassword;
 
   return (
     <div className="container">
@@ -98,8 +103,8 @@ const Signup = () => {
           />
 
 
-          <button type="submit" className="btn">
-            SIGN UP
+          <button type="submit" className="btn" disabled={!isValid || isLoading}>
+            {isLoading ? "Loading..." : "SIGN UP"}
           </button>
         </form>
 

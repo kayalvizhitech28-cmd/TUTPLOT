@@ -76,6 +76,59 @@
   border-bottom: 2px solid var(--border-color);
 }
 
+@media (max-width: 900px) {
+  .layout {
+    flex-direction: column;
+    height: auto;
+  }
+
+  .sidebar {
+    width: 100%;
+    position: sticky;
+    top: 0;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    padding: 16px;
+    gap: 8px;
+    box-shadow: var(--shadow-md);
+  }
+
+  .sidebar .logo {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 0;
+    border-bottom: none;
+  }
+
+  .menu-btn {
+    flex: 1 1 45%;
+    min-width: 120px;
+    padding: 10px 12px;
+  }
+
+  .main {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 600px) {
+  .sidebar {
+    padding: 12px;
+    gap: 6px;
+  }
+
+  .menu-btn {
+    font-size: 13px;
+    padding: 10px 10px;
+  }
+
+  .main {
+    padding: 16px;
+  }
+}
+
 /* Action Buttons */
 .continue-btn, .save-btn, .submit-btn {
   background-color: var(--primary);

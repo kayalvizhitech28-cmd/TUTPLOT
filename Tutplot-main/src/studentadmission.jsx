@@ -2,12 +2,15 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "./sidebar";
 import "./studentadmission.css";
+import "./ui-buttons.css";
 
 function StudentAdmission() {
   const navigate = useNavigate();
   const [viewMode, setViewMode] = useState("add"); // "add" or "view"
   const [filterClass, setFilterClass] = useState("All");
   const [selectedStudent, setSelectedStudent] = useState(null);
+  const [isEditingStudent, setIsEditingStudent] = useState(false);
+  const [editStudentData, setEditStudentData] = useState(null);
   
   // State for fetched DB data
   const [dbStudents, setDbStudents] = useState([]);
@@ -92,6 +95,11 @@ function StudentAdmission() {
     }
   };
 
+  const isValid = (
+    formData.Name && formData.DateofBirth && formData.Standard && formData.MotherName && formData.FatherName && formData.schoolName && formData.contact && formData.Address &&
+    (!((formData.Standard === "11th" || formData.Standard === "12th") && !formData.Group.trim()))
+  );
+
   return (
     <div className="layout">
       <Sidebar />
@@ -151,7 +159,7 @@ function StudentAdmission() {
             <input name="contact" placeholder="Contact Number" onChange={handleChange} required />
             <input name="fee" placeholder="Fees" value={formData.fee} onChange={handleChange} />
             <textarea name="Address" placeholder="Address" onChange={handleChange} required />
-            <button type="submit">Submit</button>
+            <button type="submit" disabled={!isValid}>Submit</button>
           </form>
         </div>
       ) : (
@@ -204,26 +212,94 @@ function StudentAdmission() {
       <div className="modal-overlay" onClick={() => setSelectedStudent(null)}>
         <div className="modal-content" onClick={e => e.stopPropagation()}>
           <h2>Student Details</h2>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-            <p><strong>ID:</strong> {selectedStudent.id}</p>
-            <p><strong>Name:</strong> {selectedStudent.name}</p>
-            <p><strong>DOB:</strong> {selectedStudent.dob}</p>
-            <p><strong>Class:</strong> {selectedStudent.class}</p>
-            <p><strong>Group:</strong> {selectedStudent.group || "N/A"}</p>
-            <p><strong>Mother Name:</strong> {selectedStudent.motherName}</p>
-            <p><strong>Father Name:</strong> {selectedStudent.parent}</p>
-            <p><strong>Contact:</strong> {selectedStudent.contact}</p>
-            <p><strong>School Name:</strong> {selectedStudent.schoolName}</p>
-            <p><strong>Total Fees:</strong> {selectedStudent.fee}</p>
-            <p>
-              <strong>Pending Fees:</strong> 
-              <span style={{ color: selectedStudent.pendingFee !== "₹0" ? "#e11d48" : "#16a34a", fontWeight: "bold" }}>
-                {selectedStudent.pendingFee}
-              </span>
-            </p>
-            <p style={{ gridColumn: '1 / -1' }}><strong>Address:</strong> {selectedStudent.address}</p>
-          </div>
-          <button className="close-modal-btn" onClick={() => setSelectedStudent(null)}>Close</button>
+          {!isEditingStudent ? (
+            <>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                <p><strong>ID:</strong> {selectedStudent.id}</p>
+                <p><strong>Name:</strong> {selectedStudent.name}</p>
+                <p><strong>DOB:</strong> {selectedStudent.dob}</p>
+                <p><strong>Class:</strong> {selectedStudent.class}</p>
+                <p><strong>Group:</strong> {selectedStudent.group || "N/A"}</p>
+                <p><strong>Mother Name:</strong> {selectedStudent.motherName}</p>
+                <p><strong>Father Name:</strong> {selectedStudent.parent}</p>
+                <p><strong>Contact:</strong> {selectedStudent.contact}</p>
+                <p><strong>School Name:</strong> {selectedStudent.schoolName}</p>
+                <p><strong>Total Fees:</strong> {selectedStudent.fee}</p>
+                <p>
+                  <strong>Pending Fees:</strong> 
+                  <span style={{ color: selectedStudent.pendingFee !== "₹0" ? "#e11d48" : "#16a34a", fontWeight: "bold" }}>
+                    {selectedStudent.pendingFee}
+                  </span>
+                </p>
+                <p style={{ gridColumn: '1 / -1' }}><strong>Address:</strong> {selectedStudent.address}</p>
+              </div>
+              <div className="modal-actions">
+                <button className="action-btn edit small" onClick={() => { setIsEditingStudent(true); setEditStudentData({
+                  Name: selectedStudent.name || "",
+                  DateofBirth: selectedStudent.dob || "",
+                  Standard: selectedStudent.class || "",
+                  Group: selectedStudent.group || "",
+                  MotherName: selectedStudent.motherName || "",
+                  FatherName: selectedStudent.parent || "",
+                  schoolName: selectedStudent.schoolName || "",
+                  fee: selectedStudent.fee || "",
+                  contact: selectedStudent.contact || "",
+                  Address: selectedStudent.address || "",
+                })}}>Edit</button>
+                <button className="action-btn delete small" onClick={async () => {
+                  if (!window.confirm('Delete this student?')) return;
+                  try {
+                    const res = await fetch(`https://tutplot.onrender.com/api/students/${selectedStudent.id}`, { method: 'DELETE' });
+                    if (res.ok) {
+                      setDbStudents(prev => prev.filter(s => s.id !== selectedStudent.id));
+                      setSelectedStudent(null);
+                      alert('Student deleted');
+                    } else alert('Delete failed');
+                  } catch (e) { console.error(e); alert('Delete failed'); }
+                }}>Delete</button>
+                <button className="action-btn ghost small" onClick={() => setSelectedStudent(null)}>Close</button>
+              </div>
+            </>
+          ) : (
+              <div style={{ display: 'grid', gap: '8px' }}>
+              <input name="Name" value={editStudentData.Name} onChange={(e)=>setEditStudentData({...editStudentData, Name: e.target.value})} />
+              <input name="DateofBirth" type="date" value={editStudentData.DateofBirth} onChange={(e)=>setEditStudentData({...editStudentData, DateofBirth: e.target.value})} />
+              <select name="Standard" value={editStudentData.Standard} onChange={(e)=>setEditStudentData({...editStudentData, Standard: e.target.value})}>
+                <option value="">Select Class</option>
+                <option value="10">10th</option>
+                <option value="11th">11th</option>
+                <option value="12th">12th</option>
+              </select>
+              {(editStudentData.Standard === '11th' || editStudentData.Standard === '12th') && (
+                <input name="Group" placeholder="Group" value={editStudentData.Group} onChange={(e)=>setEditStudentData({...editStudentData, Group: e.target.value})} />
+              )}
+              <input name="MotherName" value={editStudentData.MotherName} onChange={(e)=>setEditStudentData({...editStudentData, MotherName: e.target.value})} />
+              <input name="FatherName" value={editStudentData.FatherName} onChange={(e)=>setEditStudentData({...editStudentData, FatherName: e.target.value})} />
+              <input name="schoolName" value={editStudentData.schoolName} onChange={(e)=>setEditStudentData({...editStudentData, schoolName: e.target.value})} />
+              <input name="contact" value={editStudentData.contact} onChange={(e)=>setEditStudentData({...editStudentData, contact: e.target.value})} />
+              <input name="fee" value={editStudentData.fee} onChange={(e)=>setEditStudentData({...editStudentData, fee: e.target.value})} />
+              <textarea name="Address" value={editStudentData.Address} onChange={(e)=>setEditStudentData({...editStudentData, Address: e.target.value})} />
+              <div className="modal-actions">
+                <button className="action-btn edit" onClick={async () => {
+                  try {
+                    const res = await fetch(`https://tutplot.onrender.com/api/students/${selectedStudent.id}`, {
+                      method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(editStudentData)
+                    });
+                    if (res.ok) {
+                      const updated = await res.json();
+                      setDbStudents(prev => prev.map(s => s.id === selectedStudent.id ? ({ ...s, name: editStudentData.Name, dob: editStudentData.DateofBirth, class: editStudentData.Standard, group: editStudentData.Group, motherName: editStudentData.MotherName, parent: editStudentData.FatherName, contact: editStudentData.contact, schoolName: editStudentData.schoolName, address: editStudentData.Address, fee: editStudentData.fee }) : s));
+                      setSelectedStudent(prev => ({ ...prev, name: editStudentData.Name, dob: editStudentData.DateofBirth, class: editStudentData.Standard, group: editStudentData.Group, motherName: editStudentData.MotherName, parent: editStudentData.FatherName, contact: editStudentData.contact, schoolName: editStudentData.schoolName, address: editStudentData.Address, fee: editStudentData.fee }));
+                      setIsEditingStudent(false);
+                      alert('Student updated');
+                    } else {
+                      alert('Update failed');
+                    }
+                  } catch (e) { console.error(e); alert('Update failed'); }
+                }}>Save</button>
+                <button className="action-btn ghost" onClick={() => setIsEditingStudent(false)}>Cancel</button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     )}

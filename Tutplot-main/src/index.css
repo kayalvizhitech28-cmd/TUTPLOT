@@ -42,3 +42,9 @@ body {
 button {
   font-family: 'Inter', sans-serif;
 }
+
+@media (max-width: 900px) {
+  body {
+    font-size: 14px;
+  }
+}

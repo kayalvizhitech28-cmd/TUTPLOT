@@ -40,5 +40,50 @@ async function createStaff(data) {
   return request.query(query);
 }
 
-module.exports = { getAllStaffs, createStaff };
+async function updateStaff(id, data) {
+  const pool = await poolPromise;
+  const request = pool.request();
+
+  const safeDate = (d) => {
+    if (!d || d.trim() === "") return null;
+    const dt = new Date(d);
+    return isNaN(dt.getTime()) ? null : dt;
+  };
+
+  request.input('staff_id', sql.Int, id);
+  request.input('staff_name', sql.VarChar(30), data.staff_name || data.name);
+  request.input('date_of_birth', sql.Date, safeDate(data.date_of_birth || data.dob));
+  request.input('address', sql.VarChar(50), data.address);
+  request.input('contact_number', sql.VarChar(12), data.contact_number || data.contactnumber);
+  request.input('email_id', sql.VarChar(100), data.email_id || data.emailid);
+  request.input('qualification', sql.VarChar(20), data.qualification);
+  request.input('specialization', sql.VarChar(20), data.specialization);
+  request.input('joining_date', sql.Date, safeDate(data.joining_date || data.joiningdate));
+
+  const query = `
+    UPDATE tutplot1.staff_application_table01 
+    SET staff_name = @staff_name,
+        date_of_birth = @date_of_birth,
+        address = @address,
+        contact_number = @contact_number,
+        email_id = @email_id,
+        qualification = @qualification,
+        specialization = @specialization,
+        joining_date = @joining_date
+    WHERE staff_id = @staff_id
+  `;
+
+  return request.query(query);
+}
+
+async function deleteStaff(id) {
+  const pool = await poolPromise;
+  const request = pool.request();
+  request.input('staff_id', sql.Int, id);
+
+  const query = `DELETE FROM tutplot1.staff_application_table01 WHERE staff_id = @staff_id`;
+  return request.query(query);
+}
+
+module.exports = { getAllStaffs, createStaff, updateStaff, deleteStaff };
 

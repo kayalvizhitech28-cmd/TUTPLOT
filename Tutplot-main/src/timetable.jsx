@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./timetable.css";
+import "./ui-buttons.css";
 import Sidebar from "./sidebar";  
 
 function Timetable() {
@@ -49,13 +50,13 @@ function Timetable() {
   const handleInputChange = (index, field, value) => {
     const updatedSchedule = [...scheduleData];
     updatedSchedule[index][field] = value;
-    
-    // Auto-generate subject code when subject changes
+
     if (field === "subject") {
       if (value.trim().length > 0) {
         const subjectShort = value.substring(0, 3).toUpperCase();
         const classNum = addClass.replace(/\D/g, ""); // "10th" -> "10"
-        updatedSchedule[index]["subject_code"] = `${subjectShort}${classNum}01`;
+        const codeIndex = String(index + 1).padStart(2, "0");
+        updatedSchedule[index]["subject_code"] = `${subjectShort}${classNum}${codeIndex}`;
       } else {
         updatedSchedule[index]["subject_code"] = "";
       }
@@ -98,6 +99,8 @@ function Timetable() {
       alert("Error saving timetable");
     }
   };
+
+  const isValidTimetable = scheduleData.some(r => (r.subject && r.subject.trim()) && (r.staff && r.staff.trim()));
 
   // Filter DB data for selected class and sort by day order
   const dayOrder = { "Monday": 1, "Tuesday": 2, "Wednesday": 3, "Thursday": 4, "Friday": 5, "Saturday": 6 };
@@ -192,7 +195,7 @@ function Timetable() {
               </tbody>
             </table>
             <div style={{ display: "flex", justifyContent: "center", width: "100%" }}>
-              <button className="confirm-btn-lite" onClick={handleSave}>CONFIRM</button>
+              <button className="confirm-btn-lite" onClick={handleSave} disabled={!isValidTimetable} style={{ opacity: !isValidTimetable ? 0.6 : 1, cursor: !isValidTimetable ? 'not-allowed' : 'pointer' }}>CONFIRM</button>
             </div>
           </div>
         ) : (
