@@ -220,3 +220,4 @@ select*from tutplot1.attendance_table;
 
 alter table tutplot1.attendance_table
 add attendence_code as ('ADC'+right('000'+cast(staff_id as varchar(20)),3)) persisted;
+
