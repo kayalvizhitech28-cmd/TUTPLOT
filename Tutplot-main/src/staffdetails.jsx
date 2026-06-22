@@ -1,3 +1,4 @@
+import toast from 'react-hot-toast';
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "./sidebar";
@@ -67,14 +68,14 @@ function Staffdetails() {
         body: JSON.stringify(formData)
       });
       if (response.ok) {
-        alert("Staff Added Successfully!");
-        navigate("/feesdetails");
+        toast.success("Staff Added Successfully!");
+        setTimeout(() => window.location.reload(), 1500);
       } else {
-        alert("Error adding staff");
+        toast.error("Error adding staff");
       }
     } catch (error) {
       console.error(error);
-      alert("Error adding staff");
+      toast.error("Error adding staff");
     }
   };
 
@@ -211,9 +212,9 @@ function Staffdetails() {
                     if (res.ok) {
                       setStaffData(prev => prev.filter(s => s.id !== selectedStaff.id));
                       setSelectedStaff(null);
-                      alert('Staff deleted');
-                    } else alert('Delete failed');
-                  } catch (e) { console.error(e); alert('Delete failed'); }
+                      toast('Staff deleted');
+                    } else toast.error('Delete failed');
+                  } catch (e) { console.error(e); toast.error('Delete failed'); }
                 }}>Delete</button>
                 <button className="action-btn ghost small" onClick={() => setSelectedStaff(null)}>Close</button>
               </div>
@@ -236,9 +237,9 @@ function Staffdetails() {
                       setStaffData(prev => prev.map(s => s.id === selectedStaff.id ? ({ ...s, name: editStaffData.name, dob: editStaffData.dob, address: editStaffData.address, contact: editStaffData.contactnumber, emailid: editStaffData.emailid, qualification: editStaffData.qualification, specialization: editStaffData.specialization, joiningdate: editStaffData.joiningdate }) : s));
                       setSelectedStaff(prev => ({ ...prev, name: editStaffData.name, dob: editStaffData.dob, address: editStaffData.address, contact: editStaffData.contactnumber, emailid: editStaffData.emailid, qualification: editStaffData.qualification, specialization: editStaffData.specialization, joiningdate: editStaffData.joiningdate }));
                       setIsEditingStaff(false);
-                      alert('Staff updated');
-                    } else alert('Update failed');
-                  } catch (e) { console.error(e); alert('Update failed'); }
+                      toast('Staff updated');
+                    } else toast.error('Update failed');
+                  } catch (e) { console.error(e); toast.error('Update failed'); }
                 }}>Save</button>
                 <button className="action-btn ghost" onClick={()=>setIsEditingStaff(false)}>Cancel</button>
               </div>

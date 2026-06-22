@@ -1,3 +1,4 @@
+import toast from 'react-hot-toast';
 import { useNavigate } from "react-router-dom";
 import React, { useState } from "react";
 import admindashboard from "./admindashboard";
@@ -26,13 +27,13 @@ const LoginPage = () => {
       const data = await response.json();
 
       if (response.ok) {
-        alert(data.message);
+        toast(data.message);
         navigate("/admindashboard");
       } else {
-        alert(data.error || "Login failed");
+        toast.error(data.error || "Login failed");
       }
     } catch (err) {
-      alert("Server error, please try again later.");
+      toast.error("Server error, please try again later.");
     } finally {
       setIsLoading(false);
     }
@@ -135,7 +136,7 @@ const LoginPage = () => {
         
             <button 
               onClick={() => {
-                alert("Password successfully reset!");
+                toast.success("Password successfully reset!");
                 setViewState("login");
               }} 
               className="login-btn"

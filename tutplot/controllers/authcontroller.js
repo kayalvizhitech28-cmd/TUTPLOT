@@ -37,6 +37,17 @@ async function login(req, res) {
   }
 }
 
+async function logout(req, res) {
+  try {
+    // If using sessions or cookies, clear them here.
+    // e.g., res.clearCookie('token');
+    res.json({ message: "Logout successful!" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Server error during logout" });
+  }
+}
+
 async function listUsers(req, res) {
   try {
     const users = await getUsers();
@@ -46,5 +57,5 @@ async function listUsers(req, res) {
   }
 }
 
-module.exports = { signup, login, listUsers };
+module.exports = { signup, login, logout, listUsers };
 

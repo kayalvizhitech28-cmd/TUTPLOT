@@ -1,3 +1,4 @@
+import toast from 'react-hot-toast';
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./timetable.css";
@@ -80,7 +81,7 @@ function Timetable() {
       });
       
       if (response.ok) {
-        alert("Time Table Saved Successfully!");
+        toast.success("Time Table Saved Successfully!");
         setViewMode("view");
         // Reset form
         setScheduleData([
@@ -92,11 +93,11 @@ function Timetable() {
           { day: "Saturday", subject_code: "", subject: "", staff: "" }
         ]);
       } else {
-        alert("Error saving timetable");
+        toast.error("Error saving timetable");
       }
     } catch (error) {
       console.error(error);
-      alert("Error saving timetable");
+      toast.error("Error saving timetable");
     }
   };
 
@@ -140,14 +141,27 @@ function Timetable() {
                 <option value="12th">12th Standard</option>
               </select>
 
-              <label style={{ marginRight: '10px', fontWeight: 'bold' }}>Group/Section (Optional): </label>
-              <input 
-                type="text" 
-                value={addGroup} 
-                onChange={(e) => setAddGroup(e.target.value)} 
-                placeholder="e.g. Bio-Maths" 
-                style={{ padding: '8px', borderRadius: '4px' }} 
-              />
+              {(addClass === '11th' || addClass === '12th') && (
+                <>
+                  <label style={{ marginRight: '10px', fontWeight: 'bold' }}>Group: </label>
+                  <select 
+                    value={addGroup} 
+                    onChange={(e) => setAddGroup(e.target.value)} 
+                    style={{ padding: '8px', borderRadius: '4px' }} 
+                  >
+                    <option value="">Select Group</option>
+                    <optgroup label="Science">
+                      <option value="Science - Biology">Biology</option>
+                      <option value="Science - Computer Science">Computer Science</option>
+                      <option value="Science - Pure Science">Pure Science</option>
+                    </optgroup>
+                    <optgroup label="Commerce">
+                      <option value="Commerce - Business Maths">Business Maths</option>
+                      <option value="Commerce - Computer Science">Computer Science</option>
+                    </optgroup>
+                  </select>
+                </>
+              )}
             </div>
             
             <table className="timetable">

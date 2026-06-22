@@ -1,3 +1,4 @@
+import toast from 'react-hot-toast';
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "./sidebar";
@@ -156,14 +157,14 @@ function Attendance() {
         body: JSON.stringify({ form, students })
       });
       if (response.ok) {
-        alert("Attendance Submitted!");
-        navigate("/admindashboard");
+        toast.success("Attendance Submitted!");
+        setTimeout(() => window.location.reload(), 1500);
       } else {
-        alert("Error saving attendance");
+        toast.error("Error saving attendance");
       }
     } catch (error) {
       console.error(error);
-      alert("Error saving attendance");
+      toast.error("Error saving attendance");
     }
   }
 
@@ -231,14 +232,23 @@ function Attendance() {
             ))}
           </select>
             {(form.standard === "11" || form.standard === "12") && (
-              <input
-                type="text"
+              <select
                 name="group"
-                placeholder="Group"
                 value={form.group}
                 onChange={handleChange}
                 style={{ padding: '8px', borderRadius: '4px' }}
-              />
+              >
+                <option value="">Select Group</option>
+                <optgroup label="Science">
+                  <option value="Science - Biology">Biology</option>
+                  <option value="Science - Computer Science">Computer Science</option>
+                  <option value="Science - Pure Science">Pure Science</option>
+                </optgroup>
+                <optgroup label="Commerce">
+                  <option value="Commerce - Business Maths">Business Maths</option>
+                  <option value="Commerce - Computer Science">Computer Science</option>
+                </optgroup>
+              </select>
             )}
         </div>
 
@@ -327,13 +337,24 @@ function Attendance() {
                 <option value="11">11th Standard</option>
                 <option value="12">12th Standard</option>
               </select>
-              <input
-                type="text"
-                value={filterGroup}
-                placeholder="Group"
-                onChange={(e) => setFilterGroup(e.target.value)}
-                style={{ padding: '8px', borderRadius: '4px' }}
-              />
+              {(filterStandard === "11" || filterStandard === "12") && (
+                <select
+                  value={filterGroup}
+                  onChange={(e) => setFilterGroup(e.target.value)}
+                  style={{ padding: '8px', borderRadius: '4px' }}
+                >
+                  <option value="">Select Group</option>
+                  <optgroup label="Science">
+                    <option value="Science - Biology">Biology</option>
+                    <option value="Science - Computer Science">Computer Science</option>
+                    <option value="Science - Pure Science">Pure Science</option>
+                  </optgroup>
+                  <optgroup label="Commerce">
+                    <option value="Commerce - Business Maths">Business Maths</option>
+                    <option value="Commerce - Computer Science">Computer Science</option>
+                  </optgroup>
+                </select>
+              )}
               <input
                 type={filterDateInputType}
                 value={filterDate}

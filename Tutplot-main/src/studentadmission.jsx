@@ -1,3 +1,4 @@
+import toast from 'react-hot-toast';
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "./sidebar";
@@ -57,6 +58,8 @@ function StudentAdmission() {
     contact: "",
     Address: "",
   });
+  const [addStream, setAddStream] = useState("");
+  const [editStream, setEditStream] = useState("");
   const [dobInputType, setDobInputType] = useState("text");
 
   const handleChange = (e) => {
@@ -72,7 +75,7 @@ function StudentAdmission() {
     e.preventDefault();
 
     if ((formData.Standard === "11th" || formData.Standard === "12th") && !formData.Group.trim()) {
-      alert("Please enter the group for 11th/12th class before submitting.");
+      toast.error("Please enter the group for 11th/12th class before submitting.");
       return;
     }
 
@@ -84,14 +87,14 @@ function StudentAdmission() {
       });
 
       if (response.ok) {
-        alert("Student Added Successfully!");
-        navigate("/staffdetails");
+        toast.success("Student Added Successfully!");
+        setTimeout(() => window.location.reload(), 1500);
       } else {
-        alert("Failed to add student");
+        toast.error("Failed to add student");
       }
     } catch (error) {
       console.error(error);
-      alert("Error connecting to server");
+      toast.error("Error connecting to server");
     }
   };
 
@@ -145,13 +148,33 @@ function StudentAdmission() {
               <option value="12th">12th</option>
             </select>
             {(formData.Standard === "11th" || formData.Standard === "12th") && (
-              <input
-                name="Group"
-                placeholder={`${formData.Standard} Group`}
-                value={formData.Group}
-                onChange={handleChange}
-                required
-              />
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                <div style={{ display: 'flex', gap: '15px', marginBottom: '10px' }}>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <input type="radio" name="Stream" value="Science" checked={addStream === "Science"} onChange={(e) => { setAddStream(e.target.value); setFormData({ ...formData, Group: "" }); }} required /> Science
+                  </label>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <input type="radio" name="Stream" value="Commerce" checked={addStream === "Commerce"} onChange={(e) => { setAddStream(e.target.value); setFormData({ ...formData, Group: "" }); }} required /> Commerce
+                  </label>
+                </div>
+
+                {addStream === "Science" && (
+                  <select name="Group" value={formData.Group} onChange={handleChange} required>
+                    <option value="">Select Science Subject</option>
+                    <option value="Science - Biology">Biology</option>
+                    <option value="Science - Computer Science">Computer Science</option>
+                    <option value="Science - Pure Science">Pure Science</option>
+                  </select>
+                )}
+
+                {addStream === "Commerce" && (
+                  <select name="Group" value={formData.Group} onChange={handleChange} required>
+                    <option value="">Select Commerce Subject</option>
+                    <option value="Commerce - Business Maths">Business Maths</option>
+                    <option value="Commerce - Computer Science">Computer Science</option>
+                  </select>
+                )}
+              </div>
             )}
             <input name="MotherName" placeholder="Mother Name" onChange={handleChange} required />
             <input name="FatherName" placeholder="Father Name" onChange={handleChange} required />
@@ -234,18 +257,22 @@ function StudentAdmission() {
                 <p style={{ gridColumn: '1 / -1' }}><strong>Address:</strong> {selectedStudent.address}</p>
               </div>
               <div className="modal-actions">
-                <button className="action-btn edit small" onClick={() => { setIsEditingStudent(true); setEditStudentData({
+                <button className="action-btn edit small" onClick={() => { 
+                  setIsEditingStudent(true); 
+                  const grp = selectedStudent.group || "";
+                  setEditStream(grp.startsWith("Commerce") ? "Commerce" : (grp.startsWith("Science") ? "Science" : ""));
+                  setEditStudentData({
                   Name: selectedStudent.name || "",
                   DateofBirth: selectedStudent.dob || "",
                   Standard: selectedStudent.class || "",
-                  Group: selectedStudent.group || "",
+                  Group: grp,
                   MotherName: selectedStudent.motherName || "",
                   FatherName: selectedStudent.parent || "",
                   schoolName: selectedStudent.schoolName || "",
                   fee: selectedStudent.fee || "",
                   contact: selectedStudent.contact || "",
                   Address: selectedStudent.address || "",
-                })}}>Edit</button>
+                }); }}>Edit</button>
                 <button className="action-btn delete small" onClick={async () => {
                   if (!window.confirm('Delete this student?')) return;
                   try {
@@ -253,9 +280,9 @@ function StudentAdmission() {
                     if (res.ok) {
                       setDbStudents(prev => prev.filter(s => s.id !== selectedStudent.id));
                       setSelectedStudent(null);
-                      alert('Student deleted');
-                    } else alert('Delete failed');
-                  } catch (e) { console.error(e); alert('Delete failed'); }
+                      toast.success('Student deleted');
+                    } else toast.error('Delete failed');
+                  } catch (e) { console.error(e); toast.error('Delete failed'); }
                 }}>Delete</button>
                 <button className="action-btn ghost small" onClick={() => setSelectedStudent(null)}>Close</button>
               </div>
@@ -271,7 +298,33 @@ function StudentAdmission() {
                 <option value="12th">12th</option>
               </select>
               {(editStudentData.Standard === '11th' || editStudentData.Standard === '12th') && (
-                <input name="Group" placeholder="Group" value={editStudentData.Group} onChange={(e)=>setEditStudentData({...editStudentData, Group: e.target.value})} />
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  <div style={{ display: 'flex', gap: '15px', marginBottom: '10px' }}>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <input type="radio" name="EditStream" value="Science" checked={editStream === "Science"} onChange={(e)=>{ setEditStream(e.target.value); setEditStudentData({...editStudentData, Group: ""}); }} /> Science
+                    </label>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <input type="radio" name="EditStream" value="Commerce" checked={editStream === "Commerce"} onChange={(e)=>{ setEditStream(e.target.value); setEditStudentData({...editStudentData, Group: ""}); }} /> Commerce
+                    </label>
+                  </div>
+
+                  {editStream === "Science" && (
+                    <select name="EditGroup" value={editStudentData.Group} onChange={(e)=>setEditStudentData({...editStudentData, Group: e.target.value})}>
+                      <option value="">Select Science Subject</option>
+                      <option value="Science - Biology">Biology</option>
+                      <option value="Science - Computer Science">Computer Science</option>
+                      <option value="Science - Pure Science">Pure Science</option>
+                    </select>
+                  )}
+
+                  {editStream === "Commerce" && (
+                    <select name="EditGroup" value={editStudentData.Group} onChange={(e)=>setEditStudentData({...editStudentData, Group: e.target.value})}>
+                      <option value="">Select Commerce Subject</option>
+                      <option value="Commerce - Business Maths">Business Maths</option>
+                      <option value="Commerce - Computer Science">Computer Science</option>
+                    </select>
+                  )}
+                </div>
               )}
               <input name="MotherName" value={editStudentData.MotherName} onChange={(e)=>setEditStudentData({...editStudentData, MotherName: e.target.value})} />
               <input name="FatherName" value={editStudentData.FatherName} onChange={(e)=>setEditStudentData({...editStudentData, FatherName: e.target.value})} />
@@ -290,11 +343,11 @@ function StudentAdmission() {
                       setDbStudents(prev => prev.map(s => s.id === selectedStudent.id ? ({ ...s, name: editStudentData.Name, dob: editStudentData.DateofBirth, class: editStudentData.Standard, group: editStudentData.Group, motherName: editStudentData.MotherName, parent: editStudentData.FatherName, contact: editStudentData.contact, schoolName: editStudentData.schoolName, address: editStudentData.Address, fee: editStudentData.fee }) : s));
                       setSelectedStudent(prev => ({ ...prev, name: editStudentData.Name, dob: editStudentData.DateofBirth, class: editStudentData.Standard, group: editStudentData.Group, motherName: editStudentData.MotherName, parent: editStudentData.FatherName, contact: editStudentData.contact, schoolName: editStudentData.schoolName, address: editStudentData.Address, fee: editStudentData.fee }));
                       setIsEditingStudent(false);
-                      alert('Student updated');
+                      toast.success('Student updated');
                     } else {
-                      alert('Update failed');
+                      toast.error('Update failed');
                     }
-                  } catch (e) { console.error(e); alert('Update failed'); }
+                  } catch (e) { console.error(e); toast.error('Update failed'); }
                 }}>Save</button>
                 <button className="action-btn ghost" onClick={() => setIsEditingStudent(false)}>Cancel</button>
               </div>

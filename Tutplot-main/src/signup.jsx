@@ -1,3 +1,4 @@
+import toast from 'react-hot-toast';
 import { useNavigate } from "react-router-dom";
 import React, { useState } from "react";
 import "./signup.css";
@@ -23,7 +24,7 @@ const Signup = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (formData.password !== formData.confirmPassword) {
-      alert("Passwords do not match!");
+      toast("Passwords do not match!");
       return;
     }
 
@@ -42,13 +43,13 @@ const Signup = () => {
       const data = await response.json();
 
       if (response.ok) {
-        alert(data.message);
+        toast(data.message);
         navigate("/admindashboard");  // ✅ navigate only after success
       } else {
-        alert(data.error || "Signup failed");
+        toast.error(data.error || "Signup failed");
       }
     } catch (err) {
-      alert("Server error, please try again later.");
+      toast.error("Server error, please try again later.");
     } finally {
       setIsLoading(false);
     }

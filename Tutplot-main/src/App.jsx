@@ -10,22 +10,28 @@ import Feesdetails from './feesdetails.jsx';
 import TimeTable from './timetable.jsx';
 import ExamsMarks from './examsmarks.jsx';
 import Attendance from './attendance.jsx';  
+import { Toaster } from 'react-hot-toast';
+
 function App() {
   return (
-    <Routes>
-      <Route path="/" element={<Signup />} />
-      <Route path="/sign up" element={<AdminDashboard />} />
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/layout" element={<Layout />} />
-      <Route path="/admindashboard" element={<AdminDashboard />} />
-      <Route path="/studentadmission" element={<StudentAdmission />} />
-      <Route path="/staffdetails" element={<Staffdetails />} />
-      <Route path="/feesdetails" element={<Feesdetails />} />
-      <Route path="/timetable" element={<TimeTable />} />
-      <Route path="/examsmarks" element={<ExamsMarks />} />
-      <Route path="/attendance" element={<Attendance />} /> 
-    </Routes>
+    <>
+      <Toaster position="top-right" reverseOrder={false} />
+      <Routes>
+        <Route path="/" element={<Signup />} />
+        <Route path="/sign up" element={<AdminDashboard />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/layout" element={<Layout />} />
+        <Route path="/admindashboard" element={<AdminDashboard />} />
+        <Route path="/studentadmission" element={<StudentAdmission />} />
+        <Route path="/staffdetails" element={<Staffdetails />} />
+        <Route path="/feesdetails" element={<Feesdetails />} />
+        <Route path="/timetable" element={<TimeTable />} />
+        <Route path="/examsmarks" element={<ExamsMarks />} />
+        <Route path="/attendance" element={<Attendance />} /> 
+      </Routes>
+    </>
   );
 }
 
 export default App
+

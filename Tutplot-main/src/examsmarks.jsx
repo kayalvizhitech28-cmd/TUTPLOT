@@ -1,3 +1,4 @@
+import toast from 'react-hot-toast';
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "./sidebar";   
@@ -156,14 +157,14 @@ function ExamsMarks() {
         body: JSON.stringify(payload)
       });
       if (response.ok) {
-        alert("Marks saved successfully!");
-        navigate("/attendance");
+        toast.success("Marks saved successfully!");
+        setTimeout(() => window.location.reload(), 1500);
       } else {
-        alert("Error saving marks");
+        toast.error("Error saving marks");
       }
     } catch (error) {
       console.error(error);
-      alert("Error saving marks");
+      toast.error("Error saving marks");
     }
   }
 
@@ -202,7 +203,18 @@ function ExamsMarks() {
               </select>
 
               {(String(examData.class_name || "").includes("11") || String(examData.class_name || "").includes("12")) && (
-                <input type="text" name="group" placeholder="Group" value={examData.group} onChange={handleChange} style={{ padding: '8px', borderRadius: '4px' }} />
+                <select name="group" value={examData.group} onChange={handleChange} style={{ padding: '8px', borderRadius: '4px' }}>
+                  <option value="">Select Group</option>
+                  <optgroup label="Science">
+                    <option value="Science - Biology">Biology</option>
+                    <option value="Science - Computer Science">Computer Science</option>
+                    <option value="Science - Pure Science">Pure Science</option>
+                  </optgroup>
+                  <optgroup label="Commerce">
+                    <option value="Commerce - Business Maths">Business Maths</option>
+                    <option value="Commerce - Computer Science">Computer Science</option>
+                  </optgroup>
+                </select>
               )}
 
               <select name="student" value={examData.student} onChange={handleChange} style={{ padding: '8px', borderRadius: '4px' }}>

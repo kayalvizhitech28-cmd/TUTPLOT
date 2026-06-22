@@ -1,3 +1,4 @@
+import toast from 'react-hot-toast';
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "./sidebar";
@@ -81,14 +82,14 @@ function Feesdetails() {
         body: JSON.stringify(formData)
       });
       if (response.ok) {
-        alert("Fees Details Added Successfully!");
-        navigate("/timetable");
+        toast.success("Fees Details Added Successfully!");
+        setTimeout(() => window.location.reload(), 1500);
       } else {
-        alert("Error adding fees details");
+        toast.error("Error adding fees details");
       }
     } catch (error) {
       console.error(error);
-      alert("Error adding fees details");
+      toast.error("Error adding fees details");
     }
   };
 
